@@ -17,7 +17,13 @@ class LloomConfig(BaseModel):
     system_message: str = ""
     logging: bool = True
 
-class LLooM:
+class AzureLloomConfig(LloomConfig):
+    api_base: str
+    api_version: str
+    engine: str
+    model: str = "gpt-3.5-turbo-0301"
+
+class Lloom:
     token_limits: Dict[str, int] = {
         "gpt-3.5-turbo-0613": 4096,
         "gpt-3.5-turbo-16k-0613": 16384,
@@ -61,7 +67,13 @@ class LLooM:
             else:
                 self.logger.warning(f"Invalid field {k} when trying to update the config, skipping")
         try:
-            new_config = GPTConfig(**current_config_dict)
+            if isinstance(self.config, LloomConfig):
+                new_config = LloomConfig(**current_config_dict)
+            elif isinstance(self.config, AzureLloomConfig):
+                new_config = AzureLloomConfig(**current_config_dict)
+            else: 
+                self.logger.error("Unexpected config type, values were not updated")
+                return
             self.config = new_config
             self.api_key = new_config.api_key
             self.model = new_config.model
@@ -179,7 +191,10 @@ class LLooM:
             "top_p": self.top_p,
             "stop": None
         }
-        response = requests.post(url, headers=headers, data=json.dumps(data))
+        try:
+            response = requests.post(url, headers=headers, data=json.dumps(data))
+        except Exception as e: 
+            self.logger.error(f"An error occurred while trying to get a response from OpenAI: {e}")
         return(response.json())
 
     def generate(self, prompt: str) -> str:
@@ -206,3 +221,53 @@ class LLooM:
             except Exception as e:
                 self.logger.error(f'An error occurred: {str(e)}, this is the response from OpenAI API: {completion}')
                 return str(e)
+            
+class AzureLloom(Lloom):
+    def __init__(self, config: AzureLloomConfig):
+        self.config = config
+        self.logger = logging.getLogger(__name__)
+
+        if not self.logger.handlers:
+            handler = logging.StreamHandler()
+            formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+            handler.setFormatter(formatter)
+            self.logger.addHandler(handler)
+
+        self.api_type = "azure"
+        self.api_key = config.api_key
+        self.api_base = config.api_base
+        self.api_version = config.api_version
+        self.model = config.model
+        self.engine = config.engine
+        self.temperature = config.temperature
+        self.max_tokens = config.max_tokens
+        self.top_p = config.top_p
+        self.frequency_penalty = config.frequency_penalty
+        self.presence_penalty = config.presence_penalty
+        self.system_message: Dict[str, str] = {"role": "system", "content": config.system_message} if config.system_message else None
+        self.messages: List[Dict[str, str]] = [self.system_message] if config.system_message else []
+        if config.logging:
+            self.logger.setLevel(logging.INFO)
+        else:
+            self.logger.setLevel(logging.WARNING)
+
+    def get_completion(self, messages: List[Dict[str, str]]):
+        url = f"{self.api_base}openai/deployments/{self.engine}/chat/completions?api-version={self.api_version}"
+        headers = {
+            "Content-Type": "application/json",
+            "api-key": self.api_key
+        }
+        data = {
+            "messages": messages,
+            "max_tokens": self.max_tokens,
+            "temperature": self.temperature,
+            "frequency_penalty": self.frequency_penalty,
+            "presence_penalty": self.presence_penalty,
+            "top_p": self.top_p,
+            "stop": None
+        }
+        try:
+            response = requests.post(url, headers=headers, data=json.dumps(data))
+        except Exception as e: 
+            self.logger.error(f"An error occurred while trying to get a response from Azure OpenAI: {e}")
+        return(response.json())
