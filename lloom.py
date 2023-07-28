@@ -6,7 +6,7 @@ import tiktoken
 import time
 import json
 
-class Lloom_config(BaseModel):
+class LloomConfig(BaseModel):
     api_key: str
     model: str = "gpt-3.5-turbo"
     temperature: float = Field(0.9, ge=0, le=1)
@@ -29,7 +29,7 @@ class LLooM:
         "gpt-3.5-turbo-0301": 4096,
     }
 
-    def __init__(self, config: Lloom_config):
+    def __init__(self, config: LloomConfig):
         self.config = config
         self.logger = logging.getLogger(__name__)
 
