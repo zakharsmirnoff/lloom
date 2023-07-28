@@ -29,7 +29,7 @@ class LLooM:
         "gpt-3.5-turbo-0301": 4096,
     }
 
-    def __init__(self, config: lloom_config):
+    def __init__(self, config: Lloom_config):
         self.config = config
         self.logger = logging.getLogger(__name__)
 
