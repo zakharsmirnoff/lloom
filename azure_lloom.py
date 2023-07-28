@@ -5,7 +5,7 @@ from lloom import LLooM
 import requests
 import json
 
-class azure_lloom(BaseModel):
+class AzureLloom(BaseModel):
     api_key: str
     api_base: str
     api_version: str
@@ -20,7 +20,7 @@ class azure_lloom(BaseModel):
     logging: bool = True
 
 class AzureLLooM(LLooM):
-    def __init__(self, config: azure_lloom):
+    def __init__(self, config: AzureLloom):
         self.config = config
         self.logger = logging.getLogger(__name__)
 
