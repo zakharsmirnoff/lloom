@@ -1,4 +1,4 @@
-# lloom
+# Description
 This is a simple lightweight wrapper around OpenAI API, created as an alternative to a very complicated and cumbersome Langchain. I was tired of dealing with Langchain and Semantic Kernel abstractions and created my own wrapper which has only necessary features and simplifies the process of dealing with token counting and message history. 
 
 # Installation
@@ -28,15 +28,15 @@ lloom.clear_history() # you can pass the flag clear_system_message=True if you w
 - Logging: every action such as adding a message is logged via logger. You can pass logging=False in config to supress info messages and leave only the warning and error outputs. 
 
 # Available methods: 
-- you can update the config at any time:
+- You can update the config at any time:
 ```python
 lloom.update_config(temperature=0.9)
 ```
-- you can provide a system message if you haven't done so in the config:
+- You can provide a system message if you haven't done so in the config:
 ```python
 lloom.set_system_message("You will be doing code review")
 ```
-- you can add user messages and assistant messages in a straightforward fashion, as well as getting the history:
+- You can add user messages and assistant messages in a straightforward fashion, as well as getting the history:
 ```python
 lloom.add_user_messsage("This is a user message")
 lloom.add_assistant_message("This is an assistant message")
