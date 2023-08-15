@@ -1,5 +1,5 @@
 # Description
-This is a simple lightweight wrapper for OpenAI API, created as an alternative to a very complicated and cumbersome Langchain. I was tired of dealing with Langchain and Semantic Kernel abstractions and created my own wrapper which has only necessary features and simplifies the process of dealing with token counting and message history. 
+This is a simple lightweight wrapper for OpenAI API, created as an alternative to a very complicated and cumbersome Langchain. I was tired of dealing with Langchain and Semantic Kernel abstractions and created my own wrapper which has only necessary features and simplifies the process of with token counting and storing message history. 
 
 # Installation
 ```bash
