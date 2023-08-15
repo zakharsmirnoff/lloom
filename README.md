@@ -19,12 +19,12 @@ response = lloom.generate("Hello!")
 ```
 
 # Core features: 
-- Conversation history: all messages are added to the conversation history, so every time you call generate() it will pass the whole history to make an API call. You can clear the history if you'd like by running the method:
+- Conversation history: all messages are added to the conversation history, so every time you call generate() it will store your message and pass the whole history to make an API call. Then it will store the response as well. You can clear the history if you'd like by running the method:
 ```python
 lloom.clear_history() # you can pass the flag clear_system_message=True if you want to delete the system message too
 ```
 - Token counting: tokens are counted automatically for the specified model in config (model="gpt-3.5-turbo" is the default one). The function is almost an identical copy of the script provided by OpenAI in their cookbok repo.
-- Token count validation: when the program is done counting tokens, it implements the following logic: if the limit exceeded in the prompt already, it deleted the first user message. If the limit is exceeded yet the prompt is fine, it decreases the max_tokens parameter for completion (default is 2000). If there are no messages left, it will not proceed and you will see an error.
+- Token count validation: when the program is done counting tokens, it implements the following logic: if the limit exceeded in the prompt already, it deletes the first user message. If the limit is exceeded yet the prompt is fine, it decreases the max_tokens parameter for completion (default is 2000). If there are no messages left, it will not proceed and you will see an error.
 - Logging: every action such as adding a message is logged via logger. You can pass logging=False in config to supress info messages and leave only the warning and error outputs. 
 
 # Available methods: 
